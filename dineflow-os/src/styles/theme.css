@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 240 6% 4%; /* #0E0E10 */
+    --surface: 240 5% 9%; /* #16161A */
+    --surface-2: 240 6% 13%; /* #1E1E24 */
+    --foreground: 39 31% 95%; /* #F5F2EC */
+    --muted: 39 12% 58%; /* #9A958C */
+    --border: 240 6% 17%; /* #2A2A30 */
+    --accent: 41 55% 54%; /* #C9A24B */
+    --accent-foreground: 240 6% 4%; /* #0E0E10 */
+    --success: 138 28% 50%; /* #5BA678 */
+    --danger: 3 49% 55%; /* #C25450 */
+    --radius: 0.75rem;
+  }
+
+  * {
+    @apply border-border;
+  }
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    -webkit-tap-highlight-color: transparent;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-serif;
+  }
+}
