@@ -1,4 +1,4 @@
-import type { OrderService, PlaceOrderInput, Unsubscribe } from "../index";
+import type { OrderService, PlaceOrderInput } from "../index";
 import type { Order, OrderStatus } from "@/services/types";
 import { recordOrder } from "./mockCustomerService";
 
