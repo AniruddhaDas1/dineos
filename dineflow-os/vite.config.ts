@@ -4,9 +4,34 @@ import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
 import path from "node:path";
 
+// React Fast Refresh preamble injector.
+// @vitejs/plugin-react@6.0.x fails to inject the refresh preamble into
+// index.html in some setups (window.$RefreshSig$ ends up undefined and the
+// app crashes on first render). This guarantees the preamble is present in dev.
+function reactRefreshPreamble() {
+  return {
+    name: "react-refresh-preamble-fix",
+    apply: "serve" as const,
+    transformIndexHtml() {
+      const code = `import { injectIntoGlobalHook } from "/@react-refresh";
+injectIntoGlobalHook(window);
+window.$RefreshReg$ = () => {};
+window.$RefreshSig$ = () => (type) => type;`;
+      return [
+        {
+          tag: "script",
+          attrs: { type: "module" },
+          children: code,
+        },
+      ];
+    },
+  };
+}
+
 export default defineConfig({
   plugins: [
     react(),
+    reactRefreshPreamble(),
     VitePWA({
       registerType: "autoUpdate",
       includeAssets: ["icon-192.svg", "icon-512.svg"],
