@@ -33,6 +33,10 @@ export const usePosAuthStore = create<PosAuthState>()(
         set({ staff: null });
       },
     }),
-    { name: "dineflow-pos-auth" }
+    { name: "dineflow-pos-auth",
+      partialize: (state) => ({
+        staff: state.staff ? { ...state.staff, pin: "" } : null,
+      }),
+    }
   )
 );

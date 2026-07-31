@@ -2,27 +2,38 @@ import type { Order } from "@/services/types";
 
 type PrintFormat = "85mm" | "58mm" | "a4";
 
+function escapeHtml(text: string): string {
+  const div = document.createElement("div");
+  div.textContent = text;
+  return div.innerHTML;
+}
+
 export function printBill(order: Order, format: PrintFormat) {
-  const printWindow = window.open("", "_blank", "width=800,height=600");
+  const printWindow = window.open("", "_blank", "width=800,height=600,noopener,noreferrer");
   if (!printWindow) {
     alert("Please allow popups to print bills");
     return;
   }
 
-  const restaurant = JSON.parse(
-    localStorage.getItem("dineflow-restaurant") || "{}"
-  );
+  let restaurant: Record<string, unknown>;
+  try {
+    restaurant = JSON.parse(
+      localStorage.getItem("dineflow-restaurant") || "{}"
+    );
+  } catch {
+    restaurant = {};
+  }
 
-  const restaurantName = restaurant.name || "Restaurant";
-  const restaurantTagline = restaurant.tagline || "";
-  const restaurantAddress = restaurant.address || "";
-  const restaurantPhone = restaurant.phone || "";
-  const restaurantEmail = restaurant.email || "";
-  const restaurantWebsite = restaurant.website || "";
-  const restaurantGst = restaurant.gstNumber || "";
-  const restaurantFooter = restaurant.footer || "Thank you for dining with us!";
-  const gstPercent = restaurant.gstPercent || 5;
-  const serviceChargePercent = restaurant.serviceChargePercent || 10;
+  const restaurantName = escapeHtml((restaurant.name as string) || "Restaurant");
+  const restaurantTagline = escapeHtml((restaurant.tagline as string) || "");
+  const restaurantAddress = escapeHtml((restaurant.address as string) || "");
+  const restaurantPhone = escapeHtml((restaurant.phone as string) || "");
+  const restaurantEmail = escapeHtml((restaurant.email as string) || "");
+  const restaurantWebsite = escapeHtml((restaurant.website as string) || "");
+  const restaurantGst = escapeHtml((restaurant.gstNumber as string) || "");
+  const restaurantFooter = escapeHtml((restaurant.footer as string) || "Thank you for dining with us!");
+  const gstPercent = (restaurant.gstPercent as number) || 5;
+  const serviceChargePercent = (restaurant.serviceChargePercent as number) || 10;
 
   const orderType =
     order.tableId === "online"
@@ -30,6 +41,7 @@ export function printBill(order: Order, format: PrintFormat) {
         ? "Pickup"
         : "Delivery"
       : `Table ${order.tableNumber}`;
+  const safeOrderType = escapeHtml(orderType);
 
   const orderDate = new Date(order.placedAt).toLocaleString("en-IN", {
     dateStyle: "medium",
@@ -41,10 +53,10 @@ export function printBill(order: Order, format: PrintFormat) {
       (line) => `
       <div class="bill-item">
         <div class="item-details">
-          <div class="item-name">${line.quantity}× ${line.name}</div>
+          <div class="item-name">${line.quantity}× ${escapeHtml(line.name)}</div>
           ${
             line.selectedAddOns.length > 0
-              ? `<div class="item-addons">+ ${line.selectedAddOns.map((a) => a.name).join(", ")}</div>`
+              ? `<div class="item-addons">+ ${escapeHtml(line.selectedAddOns.map((a) => a.name).join(", "))}</div>`
               : ""
           }
         </div>
@@ -78,7 +90,7 @@ export function printBill(order: Order, format: PrintFormat) {
   const html = `<!DOCTYPE html>
 <html>
 <head>
-  <title>Bill - ${order.id.slice(-5)}</title>
+  <title>Bill - ${escapeHtml(order.id.slice(-5))}</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: ${isThermal ? '"Courier New", Courier, monospace' : '"Georgia", "Times New Roman", serif'}; font-size: ${format === "58mm" ? "10px" : format === "85mm" ? "12px" : "12px"}; color: ${isThermal ? "#000" : "#333"}; background: #fff; }
@@ -127,7 +139,7 @@ export function printBill(order: Order, format: PrintFormat) {
     </div>
     
     <div class="bill-meta">
-      <p>Bill #${order.id.slice(-5)} · ${orderType}</p>
+      <p>Bill #${escapeHtml(order.id.slice(-5))} · ${safeOrderType}</p>
       ${isThermal ? "" : `<p>${orderDate}</p>`}
     </div>
     
