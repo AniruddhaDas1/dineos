@@ -1,19 +1,23 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Search } from "lucide-react";
 import { services } from "@/services";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatCurrency } from "@/lib/format";
+import { useOrderContext } from "@/lib/orderContext";
 import { VegMark } from "../components/VegMark";
 import { SpiceDots } from "../components/SpiceDots";
 import { Rating } from "../components/Rating";
 import { BadgeRow } from "../components/BadgeRow";
+import { RecommendationBanner } from "@/features/ai/recommendations/RecommendationBanner";
+import { BecauseYouLiked } from "@/features/ai/recommendations/BecauseYouLiked";
+import { TrendingNow } from "@/features/ai/recommendations/TrendingNow";
 import type { Category, MenuItem, VegType } from "@/services/types";
 
 export function MenuPage() {
-  const { tableId = "" } = useParams();
   const navigate = useNavigate();
+  const { base } = useOrderContext();
   const [cats, setCats] = useState<Category[]>([]);
   const [items, setItems] = useState<MenuItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -59,7 +63,7 @@ export function MenuPage() {
     );
     Object.values(sectionRefs.current).forEach((el) => el && obs.observe(el));
     return () => obs.disconnect();
-  }, [cats, loading]);
+  }, [cats, loading, query, vegFilter]);
 
   function scrollToCat(id: string) {
     sectionRefs.current[id]?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -85,6 +89,7 @@ export function MenuPage() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search dishes…"
+            aria-label="Search dishes"
             className="pl-9"
           />
         </div>
@@ -122,6 +127,11 @@ export function MenuPage() {
 
       {/* Menu sections */}
       <div className="p-4">
+        {/* AI Recommendations */}
+        <RecommendationBanner />
+        <BecauseYouLiked />
+        <TrendingNow />
+
         {cats.map((c) => {
           const list = filtered.filter((i) => i.categoryId === c.id);
           if (!list.length) return null;
@@ -141,7 +151,7 @@ export function MenuPage() {
                     key={it.id}
                     disabled={!it.available}
                     onClick={() =>
-                      navigate(`/table/${tableId}/item/${it.id}`)
+                      navigate(`${base}/item/${it.id}`)
                     }
                     className="flex w-full gap-3 rounded-xl border border-border bg-surface p-3 text-left disabled:opacity-50"
                   >

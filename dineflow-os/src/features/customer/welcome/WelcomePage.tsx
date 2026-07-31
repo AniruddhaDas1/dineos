@@ -21,7 +21,7 @@ export function WelcomePage() {
       return;
     }
     setCustomer({ name: name.trim(), mobile });
-    navigate("/table/tbl-12"); // demo: default table; QR would encode this
+    navigate("/order/table/tbl-12"); // demo: default table; QR would encode this
   }
 
   return (

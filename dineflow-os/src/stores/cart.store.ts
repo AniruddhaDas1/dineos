@@ -33,7 +33,8 @@ export const useCartStore = create<CartState>((set, get) => {
       const selectedAddOns = addOns.filter((a) => a.selected !== false);
       const id = cartLineId(
         item.id,
-        selectedAddOns.map((a) => a.id)
+        selectedAddOns.map((a) => a.id),
+        instructions || undefined
       );
       const unitPrice =
         item.price +

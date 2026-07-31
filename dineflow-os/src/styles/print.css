@@ -1,0 +1,327 @@
+/* Print styles for thermal and A4 bills */
+
+/* Base print reset */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #print-target,
+  #print-target * {
+    visibility: visible;
+  }
+  #print-target {
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+}
+
+/* 85mm thermal */
+.print-85mm {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+  width: 80mm;
+  padding: 5mm;
+  color: #000;
+  background: #fff;
+}
+
+.print-85mm .bill-header {
+  text-align: center;
+  margin-bottom: 4mm;
+}
+
+.print-85mm .bill-header h2 {
+  font-size: 14px;
+  font-weight: bold;
+  margin: 0 0 2mm 0;
+}
+
+.print-85mm .bill-header p {
+  font-size: 10px;
+  margin: 1mm 0;
+}
+
+.print-85mm .bill-separator {
+  border: none;
+  border-top: 1px dashed #000;
+  margin: 3mm 0;
+}
+
+.print-85mm .bill-items {
+  margin: 3mm 0;
+}
+
+.print-85mm .bill-item {
+  display: flex;
+  justify-content: space-between;
+  margin: 1mm 0;
+}
+
+.print-85mm .bill-item .item-name {
+  flex: 1;
+}
+
+.print-85mm .bill-item .item-qty {
+  width: 20mm;
+  text-align: right;
+}
+
+.print-85mm .bill-item .item-price {
+  width: 25mm;
+  text-align: right;
+}
+
+.print-85mm .bill-totals {
+  margin: 3mm 0;
+}
+
+.print-85mm .bill-totals .total-row {
+  display: flex;
+  justify-content: space-between;
+  margin: 1mm 0;
+}
+
+.print-85mm .bill-totals .total-row.grand-total {
+  font-weight: bold;
+  font-size: 14px;
+  border-top: 1px dashed #000;
+  padding-top: 2mm;
+  margin-top: 2mm;
+}
+
+.print-85mm .bill-footer {
+  text-align: center;
+  margin-top: 4mm;
+  font-size: 10px;
+}
+
+/* 58mm thermal */
+.print-58mm {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 10px;
+  width: 48mm;
+  padding: 3mm;
+  color: #000;
+  background: #fff;
+}
+
+.print-58mm .bill-header {
+  text-align: center;
+  margin-bottom: 3mm;
+}
+
+.print-58mm .bill-header h2 {
+  font-size: 12px;
+  font-weight: bold;
+  margin: 0 0 1mm 0;
+}
+
+.print-58mm .bill-header p {
+  font-size: 8px;
+  margin: 0.5mm 0;
+}
+
+.print-58mm .bill-separator {
+  border: none;
+  border-top: 1px dashed #000;
+  margin: 2mm 0;
+}
+
+.print-58mm .bill-items {
+  margin: 2mm 0;
+}
+
+.print-58mm .bill-item {
+  display: flex;
+  justify-content: space-between;
+  margin: 0.5mm 0;
+}
+
+.print-58mm .bill-item .item-name {
+  flex: 1;
+}
+
+.print-58mm .bill-item .item-qty {
+  width: 12mm;
+  text-align: right;
+}
+
+.print-58mm .bill-item .item-price {
+  width: 18mm;
+  text-align: right;
+}
+
+.print-58mm .bill-totals {
+  margin: 2mm 0;
+}
+
+.print-58mm .bill-totals .total-row {
+  display: flex;
+  justify-content: space-between;
+  margin: 0.5mm 0;
+}
+
+.print-58mm .bill-totals .total-row.grand-total {
+  font-weight: bold;
+  font-size: 12px;
+  border-top: 1px dashed #000;
+  padding-top: 1mm;
+  margin-top: 1mm;
+}
+
+.print-58mm .bill-footer {
+  text-align: center;
+  margin-top: 3mm;
+  font-size: 8px;
+}
+
+/* A4 */
+.print-a4 {
+  font-family: "Georgia", "Times New Roman", serif;
+  font-size: 12px;
+  width: 210mm;
+  min-height: 297mm;
+  padding: 20mm;
+  color: #333;
+  background: #fff;
+  box-sizing: border-box;
+}
+
+.print-a4 .bill-header {
+  text-align: center;
+  border-bottom: 2px solid #c9a24b;
+  padding-bottom: 8mm;
+  margin-bottom: 8mm;
+}
+
+.print-a4 .bill-header .restaurant-name {
+  font-size: 28px;
+  font-weight: bold;
+  color: #0e0e10;
+  margin: 0 0 2mm 0;
+}
+
+.print-a4 .bill-header .restaurant-tagline {
+  font-size: 14px;
+  color: #9a958c;
+  font-style: italic;
+  margin: 0 0 4mm 0;
+}
+
+.print-a4 .bill-header .contact-info {
+  font-size: 10px;
+  color: #666;
+  line-height: 1.6;
+}
+
+.print-a4 .bill-header .contact-info p {
+  margin: 0.5mm 0;
+}
+
+.print-a4 .bill-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8mm;
+  font-size: 11px;
+  color: #666;
+}
+
+.print-a4 .bill-separator {
+  border: none;
+  border-top: 1px solid #e0e0e0;
+  margin: 6mm 0;
+}
+
+.print-a4 .bill-items {
+  margin: 6mm 0;
+}
+
+.print-a4 .bill-items h3 {
+  font-size: 14px;
+  color: #0e0e10;
+  margin: 0 0 4mm 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.print-a4 .bill-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 2mm 0;
+  border-bottom: 1px dotted #e0e0e0;
+}
+
+.print-a4 .bill-item:last-child {
+  border-bottom: none;
+}
+
+.print-a4 .bill-item .item-details {
+  flex: 1;
+}
+
+.print-a4 .bill-item .item-name {
+  font-weight: 500;
+  color: #0e0e10;
+}
+
+.print-a4 .bill-item .item-addons {
+  font-size: 10px;
+  color: #9a958c;
+  margin-top: 1mm;
+}
+
+.print-a4 .bill-item .item-qty {
+  width: 30mm;
+  text-align: center;
+  color: #666;
+}
+
+.print-a4 .bill-item .item-price {
+  width: 35mm;
+  text-align: right;
+  font-weight: 500;
+  color: #0e0e10;
+}
+
+.print-a4 .bill-totals {
+  margin: 8mm 0;
+  padding: 4mm;
+  background: #f9f7f3;
+  border-radius: 4px;
+}
+
+.print-a4 .bill-totals .total-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 1.5mm 0;
+  font-size: 11px;
+}
+
+.print-a4 .bill-totals .total-row.grand-total {
+  font-size: 16px;
+  font-weight: bold;
+  color: #0e0e10;
+  border-top: 2px solid #c9a24b;
+  padding-top: 3mm;
+  margin-top: 3mm;
+}
+
+.print-a4 .bill-footer {
+  text-align: center;
+  margin-top: 10mm;
+  padding-top: 6mm;
+  border-top: 2px solid #c9a24b;
+}
+
+.print-a4 .bill-footer .thank-you {
+  font-size: 14px;
+  color: #c9a24b;
+  font-style: italic;
+  margin-bottom: 2mm;
+}
+
+.print-a4 .bill-footer .footer-info {
+  font-size: 9px;
+  color: #9a958c;
+}

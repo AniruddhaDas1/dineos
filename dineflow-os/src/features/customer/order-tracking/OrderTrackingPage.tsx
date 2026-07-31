@@ -22,15 +22,18 @@ export function OrderTrackingPage() {
   const subscribe = useOrderStore((s) => s.subscribe);
 
   useEffect(() => {
+    let cancelled = false;
     let unsub: (() => void) | undefined;
-    (async () => {
-      const o = await services.order.getOrder(orderId);
+    services.order.getOrder(orderId).then((o) => {
+      if (cancelled) return;
       if (o) setOrder(o);
       unsub = subscribe(orderId);
-    })();
-    return () => unsub?.();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [orderId]);
+    });
+    return () => {
+      cancelled = true;
+      unsub?.();
+    };
+  }, [orderId, setOrder, subscribe]);
 
   if (!activeOrder) return <TopBar title="Loading…" />;
 
@@ -113,13 +116,13 @@ export function OrderTrackingPage() {
         <div className="mt-6 grid gap-3">
           <Button
             variant="outline"
-            onClick={() => navigate(`/table/${tableId}/menu`)}
+            onClick={() => navigate(`/order/table/${tableId}/menu`)}
           >
             Add more items
           </Button>
           <Button
             onClick={() =>
-              navigate(`/table/${tableId}/order/${orderId}/bill`)
+              navigate(`/order/table/${tableId}/order/${orderId}/bill`)
             }
           >
             Request Bill

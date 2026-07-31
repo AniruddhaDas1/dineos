@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { services } from "@/services";
 import { useCartStore } from "@/stores/cart.store";
+import { useOrderContext } from "@/lib/orderContext";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { TopBar } from "../components/TopBar";
@@ -13,8 +14,9 @@ import { formatCurrency } from "@/lib/format";
 import type { AddOn, AddOnGroup, MenuItem } from "@/services/types";
 
 export function ItemDetailPage() {
-  const { itemId = "", tableId = "" } = useParams();
+  const { itemId = "" } = useParams();
   const navigate = useNavigate();
+  const { base } = useOrderContext();
   const addFromItem = useCartStore((s) => s.addFromItem);
   const [item, setItem] = useState<MenuItem | null>(null);
   const [groups, setGroups] = useState<AddOnGroup[]>([]);
@@ -26,7 +28,7 @@ export function ItemDetailPage() {
       if (!it) return;
       setItem(it);
       setGroups(
-        (it.addOnGroups ?? []).map((g) => JSON.parse(JSON.stringify(g)))
+        (it.addOnGroups ?? []).map((g: AddOnGroup) => JSON.parse(JSON.stringify(g)))
       );
     });
   }, [itemId]);
@@ -60,6 +62,8 @@ export function ItemDetailPage() {
         const target = opts.find((o) => o.id === optId)!;
         const selectedCount = opts.filter((o) => o.selected).length;
         if (target.selected) {
+          // For radio groups (max === 1), prevent deselecting the only selected option
+          if (max === 1) return g;
           target.selected = false;
         } else {
           if (max === 1) opts.forEach((o) => (o.selected = false));
@@ -74,7 +78,7 @@ export function ItemDetailPage() {
   function add() {
     if (!valid || !item) return;
     addFromItem(item, qty, selectedAddOns, instructions);
-    navigate(`/table/${tableId}/menu`);
+    navigate(`${base}/menu`);
   }
 
   return (

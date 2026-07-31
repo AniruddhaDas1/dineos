@@ -13,4 +13,10 @@ export const restaurant: Restaurant = {
   currency: "INR",
   gstPercent: 5,
   serviceChargePercent: 10,
+  phone: "+91 98765 43210",
+  email: "hello@saffronandsmoke.in",
+  website: "www.saffronandsmoke.in",
+  gstNumber: "27AABCS1234F1Z5",
+  address: "12 MG Road, Mumbai 400001",
+  footer: "Thank you for dining with us!",
 };

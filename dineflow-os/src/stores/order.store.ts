@@ -1,8 +1,20 @@
 import { create } from "zustand";
 import { services } from "@/services";
 import { restaurant } from "@/data/restaurant";
-import { tables } from "@/data/tables";
-import type { Order, OrderStatus, AssistanceType, Customer } from "@/services/types";
+import { legacyTables } from "@/data/tables";
+import { computeTotals } from "@/lib/totals";
+import type { DeliveryAddress, Order, OrderStatus, AssistanceType, Customer } from "@/services/types";
+
+interface PlaceOnlineInput {
+  channel: "pickup" | "delivery";
+  customer: Customer;
+  lines: Order["lines"];
+  subtotal: number;
+  discount?: number;
+  deliveryFee?: number;
+  deliveryAddress?: DeliveryAddress | null;
+  deliveryInstructions?: string;
+}
 
 interface OrderState {
   activeOrder: Order | null;
@@ -14,6 +26,7 @@ interface OrderState {
     lines: Order["lines"];
     subtotal: number;
   }) => Promise<Order>;
+  placeOnline: (input: PlaceOnlineInput) => Promise<Order>;
   subscribe: (orderId: string) => () => void;
   setStatus: (status: OrderStatus) => void;
   setOrder: (order: Order) => void;
@@ -31,7 +44,8 @@ export const useOrderStore = create<OrderState>((set, get) => ({
   },
 
   async placeFromCart({ tableId, customer, lines, subtotal }) {
-    const table = tables.find((t) => t.id === tableId)!;
+    const table = legacyTables.find((t) => t.id === tableId);
+    const tableNumber = table ? table.number : 0;
     const gst = +(subtotal * (restaurant.gstPercent / 100)).toFixed(2);
     const serviceCharge = +(
       subtotal *
@@ -40,13 +54,49 @@ export const useOrderStore = create<OrderState>((set, get) => ({
     const total = +(subtotal + gst + serviceCharge).toFixed(2);
     const order = await services.order.placeOrder({
       tableId,
-      tableNumber: table.number,
+      tableNumber,
       customer,
       lines,
       subtotal,
       gst,
       serviceCharge,
       total,
+      channel: "dine-in",
+    });
+    set({ activeOrder: order });
+    return order;
+  },
+
+  async placeOnline({
+    channel,
+    customer,
+    lines,
+    subtotal,
+    discount = 0,
+    deliveryFee = 0,
+    deliveryAddress,
+    deliveryInstructions,
+  }) {
+    const totals = computeTotals({
+      subtotal,
+      gstPercent: restaurant.gstPercent,
+      serviceChargePercent: restaurant.serviceChargePercent,
+      discount,
+      deliveryFee,
+    });
+    const order = await services.order.placeOrder({
+      tableId: "online",
+      tableNumber: 0,
+      customer,
+      lines,
+      subtotal: totals.afterDiscount,
+      gst: totals.gst,
+      serviceCharge: totals.serviceCharge,
+      deliveryFee: totals.deliveryFee,
+      total: totals.total,
+      channel,
+      deliveryAddress: deliveryAddress ?? undefined,
+      deliveryInstructions: deliveryInstructions ?? undefined,
     });
     set({ activeOrder: order });
     return order;

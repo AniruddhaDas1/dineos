@@ -38,7 +38,7 @@ export function FeedbackPage() {
             </p>
             <Button
               className="mt-6"
-              onClick={() => navigate(`/table/${tableId}`)}
+              onClick={() => navigate(`/order/table/${tableId}`)}
             >
               Back to table
             </Button>

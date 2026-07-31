@@ -1,3 +1,5 @@
+@import "./print.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -19,6 +21,9 @@
 
   * {
     @apply border-border;
+  }
+  html {
+    scroll-behavior: smooth;
   }
   html,
   body,
