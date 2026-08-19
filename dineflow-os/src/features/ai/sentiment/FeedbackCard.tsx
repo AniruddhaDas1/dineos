@@ -99,7 +99,7 @@ export function FeedbackCard({ feedback, onClick }: FeedbackCardProps) {
               {sentiment.topics.map((topic) => (
                 <Badge
                   key={topic}
-                  variant="secondary"
+                  variant="outline"
                   className="text-xs flex items-center gap-1"
                 >
                   <Tag className="h-2.5 w-2.5" />

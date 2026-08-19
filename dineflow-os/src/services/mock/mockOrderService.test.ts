@@ -52,4 +52,33 @@ describe("mockOrderService", () => {
     const statuses = cb.mock.calls.map((c) => c[0]);
     expect(statuses).toContain("preparing");
   });
+
+  it("adds items to an existing order and recomputes totals", async () => {
+    const order = await mockOrderService.placeOrder({
+      ...baseInput,
+      lines: [{ id: "line-1", itemId: "mi-1", name: "Paneer Tikka", basePrice: 420, selectedAddOns: [], quantity: 1, unitPrice: 420 }],
+    });
+
+    const updated = await mockOrderService.addItemsToOrder(order.id, [
+      { id: "line-2", itemId: "mi-5", name: "Garlic Naan", basePrice: 70, selectedAddOns: [], quantity: 2, unitPrice: 70 },
+    ]);
+
+    expect(updated).toBeDefined();
+    expect(updated?.lines).toHaveLength(2);
+    expect(updated?.subtotal).toBe(560);
+  });
+
+  it("merges matching lines when adding items", async () => {
+    const order = await mockOrderService.placeOrder({
+      ...baseInput,
+      lines: [{ id: "line-1", itemId: "mi-1", name: "Paneer Tikka", basePrice: 420, selectedAddOns: [], quantity: 1, unitPrice: 420 }],
+    });
+
+    const updated = await mockOrderService.addItemsToOrder(order.id, [
+      { id: "line-1", itemId: "mi-1", name: "Paneer Tikka", basePrice: 420, selectedAddOns: [], quantity: 1, unitPrice: 420 },
+    ]);
+
+    expect(updated?.lines).toHaveLength(1);
+    expect(updated?.lines[0].quantity).toBe(2);
+  });
 });

@@ -19,6 +19,7 @@ const InstantPosPage = lazy(() => import("@/features/pos/instant-pos/InstantPosP
 const OnlineOrdersPage = lazy(() => import("@/features/pos/online-orders/OnlineOrdersPage").then(m => ({ default: m.OnlineOrdersPage })));
 const MenuBuilderPage = lazy(() => import("@/features/pos/menu/MenuBuilderPage").then(m => ({ default: m.MenuBuilderPage })));
 const ReservationsPage = lazy(() => import("@/features/pos/reservations/ReservationsPage").then(m => ({ default: m.ReservationsPage })));
+const MarketingPage = lazy(() => import("@/features/pos/marketing/MarketingPage").then(m => ({ default: m.MarketingPage })));
 const KdsLayout = lazy(() => import("@/features/kds/KdsLayout").then(m => ({ default: m.KdsLayout })));
 
 import { PermissionGate } from "@/components/auth/PermissionGate";
@@ -39,6 +40,7 @@ const posChildren = [
   { path: "online-orders", element: <PermissionGate permission="orders:view"><OnlineOrdersPage /></PermissionGate> },
   { path: "menu", element: <PermissionGate permission="menu:manage"><MenuBuilderPage /></PermissionGate> },
   { path: "reservations", element: <PermissionGate permission="reservations:view"><ReservationsPage /></PermissionGate> },
+  { path: "marketing", element: <PermissionGate permission="marketing:view"><MarketingPage /></PermissionGate> },
   { path: "settings", element: <PermissionGate permission="settings:view"><SettingsPage /></PermissionGate> },
 ];
 

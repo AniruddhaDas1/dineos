@@ -71,6 +71,7 @@ export type Permission =
   | "website:build"
   | "pos:instant" | "reservations:view" | "reservations:create" | "reservations:edit"
   | "menu:manage"
+  | "marketing:view" | "marketing:manage"
   | "settings:view" | "settings:manage"
   | "aggregator:simulate" | "kds:view";
 
@@ -465,4 +466,201 @@ export interface SentimentService {
   analyzeSentiment(text: string, rating: number): Promise<SentimentResult>;
   getSentimentTrend(dateRange: { start: string; end: string }): Promise<SentimentTrend[]>;
   getTopTopics(limit: number): Promise<TopicFrequency[]>;
+}
+
+// ─── Marketing Automation Types ─────────────────────────────────────
+
+export type MarketingChannel = "whatsapp" | "sms" | "email";
+
+export interface MarketingAudience {
+  segment: "all" | Segment;
+  tier: "all" | LoyaltyTier;
+  minVisits?: number;
+  minSpend?: number;
+}
+
+export interface MarketingTemplate {
+  id: string;
+  name: string;
+  channel: MarketingChannel;
+  subject?: string;
+  body: string;
+  createdAt: number;
+}
+
+export type CampaignStatus = "draft" | "scheduled" | "running" | "completed" | "paused";
+
+export interface CampaignStats {
+  targeted: number;
+  sent: number;
+  delivered: number;
+  opened: number;
+  clicked: number;
+  failed: number;
+}
+
+export interface MarketingCampaign {
+  id: string;
+  name: string;
+  channel: MarketingChannel;
+  audience: MarketingAudience;
+  templateId?: string;
+  message: string;
+  subject?: string;
+  status: CampaignStatus;
+  scheduledAt?: number;
+  sentAt?: number;
+  createdAt: number;
+  stats: CampaignStats;
+}
+
+export type AutomationTrigger =
+  | "first_order"
+  | "order_completed"
+  | "negative_feedback"
+  | "customer_at_risk"
+  | "customer_churned"
+  | "customer_vip";
+
+export interface MarketingAutomation {
+  id: string;
+  name: string;
+  trigger: AutomationTrigger;
+  audience: MarketingAudience;
+  channel: MarketingChannel;
+  templateId: string;
+  enabled: boolean;
+  createdAt: number;
+  runCount: number;
+  lastRunAt?: number;
+}
+
+export type MessageStatus = "sent" | "delivered" | "opened" | "clicked" | "failed";
+
+export interface MarketingMessageLog {
+  id: string;
+  campaignId?: string;
+  automationId?: string;
+  channel: MarketingChannel;
+  recipientMobile: string;
+  recipientName: string;
+  message: string;
+  status: MessageStatus;
+  sentAt: number;
+  openedAt?: number;
+  clickedAt?: number;
+}
+
+export interface MarketingAnalytics {
+  totals: CampaignStats & { openRate: number; clickRate: number };
+  byChannel: Record<MarketingChannel, CampaignStats>;
+  timeSeries: { date: string; sent: number; opened: number; clicked: number }[];
+}
+
+export interface MarketingService {
+  getTemplates(): Promise<MarketingTemplate[]>;
+  createTemplate(t: Omit<MarketingTemplate, "id" | "createdAt">): Promise<MarketingTemplate>;
+  updateTemplate(id: string, patch: Partial<MarketingTemplate>): Promise<MarketingTemplate>;
+  deleteTemplate(id: string): Promise<void>;
+
+  getCampaigns(): Promise<MarketingCampaign[]>;
+  createCampaign(c: Omit<MarketingCampaign, "id" | "createdAt" | "stats">): Promise<MarketingCampaign>;
+  updateCampaign(id: string, patch: Partial<MarketingCampaign>): Promise<MarketingCampaign>;
+  deleteCampaign(id: string): Promise<void>;
+  sendCampaign(id: string): Promise<void>;
+  getCampaignAudience(campaign: MarketingCampaign): Promise<CustomerProfile[]>;
+
+  getAutomations(): Promise<MarketingAutomation[]>;
+  createAutomation(a: Omit<MarketingAutomation, "id" | "createdAt" | "runCount" | "lastRunAt">): Promise<MarketingAutomation>;
+  updateAutomation(id: string, patch: Partial<MarketingAutomation>): Promise<MarketingAutomation>;
+  deleteAutomation(id: string): Promise<void>;
+  runAutomation(id: string): Promise<void>;
+
+  getLogs(limit?: number): Promise<MarketingMessageLog[]>;
+  getAnalytics(): Promise<MarketingAnalytics>;
+  optOut(mobile: string): Promise<void>;
+  isOptedOut(mobile: string): Promise<boolean>;
+}
+
+// ─── AI Voice Outreach Types ────────────────────────────────────────
+
+export type VoiceCallStatus = "queued" | "ringing" | "in_progress" | "completed" | "failed" | "no_answer";
+
+export type VoiceCallOutcome =
+  | "interested"
+  | "not_interested"
+  | "call_back_later"
+  | "appointment_booked"
+  | "wrong_number"
+  | "voicemail";
+
+export interface VoiceCallScript {
+  id: string;
+  name: string;
+  prompt: string;
+  createdAt: number;
+}
+
+export interface VoiceCallLog {
+  id: string;
+  customerName: string;
+  mobile: string;
+  scriptId: string;
+  status: VoiceCallStatus;
+  outcome?: VoiceCallOutcome;
+  durationSeconds?: number;
+  transcript?: string;
+  appointmentId?: string;
+  initiatedAt: number;
+  completedAt?: number;
+}
+
+export interface VoiceCallService {
+  getScripts(): Promise<VoiceCallScript[]>;
+  createScript(s: Omit<VoiceCallScript, "id" | "createdAt">): Promise<VoiceCallScript>;
+  updateScript(id: string, patch: Partial<VoiceCallScript>): Promise<VoiceCallScript>;
+  deleteScript(id: string): Promise<void>;
+
+  getCallLogs(): Promise<VoiceCallLog[]>;
+  startCall(input: { customerName: string; mobile: string; scriptId: string }): Promise<VoiceCallLog>;
+  getCall(id: string): Promise<VoiceCallLog | undefined>;
+}
+
+// ─── Appointment Booking Types ──────────────────────────────────────
+
+export type AppointmentType =
+  | "demo"
+  | "callback"
+  | "tasting"
+  | "consultation"
+  | "follow_up";
+
+export type AppointmentStatus =
+  | "scheduled"
+  | "confirmed"
+  | "completed"
+  | "cancelled"
+  | "no_show";
+
+export interface Appointment {
+  id: string;
+  customerName: string;
+  mobile: string;
+  type: AppointmentType;
+  dateTime: number;
+  durationMinutes: number;
+  status: AppointmentStatus;
+  notes?: string;
+  callId?: string;
+  reservationId?: string;
+  createdAt: number;
+}
+
+export interface AppointmentService {
+  getAppointments(): Promise<Appointment[]>;
+  createAppointment(a: Omit<Appointment, "id" | "createdAt">): Promise<Appointment>;
+  updateAppointment(id: string, patch: Partial<Appointment>): Promise<Appointment>;
+  cancelAppointment(id: string): Promise<void>;
+  completeAppointment(id: string): Promise<void>;
+  linkReservation(appointmentId: string, reservationId: string): Promise<Appointment>;
 }

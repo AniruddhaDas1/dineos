@@ -1,4 +1,4 @@
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, Link } from "react-router-dom";
 import {
   LayoutDashboard,
   Grid3X3,
@@ -15,6 +15,8 @@ import {
   Phone,
   Calendar,
   BookOpen,
+  Megaphone,
+  ExternalLink,
 } from "lucide-react";
 import { usePosAuthStore } from "@/stores/posAuth.store";
 import { usePermissionStore } from "@/stores/permissions.store";
@@ -35,6 +37,7 @@ const links: { to: string; label: string; icon: React.ComponentType<{ className?
   { to: "/pos/website-builder", label: "Website", icon: Globe, permission: "website:build", feature: "websiteBuilder" },
   { to: "/pos/reservations", label: "Reservations", icon: Calendar, permission: "reservations:view", feature: "reservations" },
   { to: "/pos/menu", label: "Menu", icon: BookOpen, permission: "menu:manage" },
+  { to: "/pos/marketing", label: "Marketing", icon: Megaphone, permission: "marketing:view", feature: "marketing" },
   { to: "/pos/settings", label: "Settings", icon: Settings, permission: "settings:view" },
 ];
 
@@ -72,7 +75,7 @@ export function Sidebar() {
       </div>
 
       {/* Nav links */}
-      <nav className="flex-1 space-y-1 px-3 py-4">
+      <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
         {visibleLinks.map((link) => (
           <NavLink
             key={link.to}
@@ -92,24 +95,40 @@ export function Sidebar() {
         ))}
       </nav>
 
-      {/* Staff + logout */}
-      <div className="border-t border-border px-5 py-4">
+      {/* Staff + Actions */}
+      <div className="border-t border-border px-4 py-4 space-y-2.5">
         {staff && (
-          <>
+          <div className="px-1">
             <p className="text-sm font-medium">{staff.name}</p>
-            <p className="mb-3 text-xs capitalize text-muted">{staff.role}</p>
+            <p className="text-xs capitalize text-muted">{staff.role}</p>
             {staff.role === "admin" && (
-              <p className="mb-2 text-[10px] uppercase tracking-widest text-danger">Full Access</p>
+              <p className="mt-0.5 text-[10px] uppercase tracking-widest text-danger">Full Access</p>
             )}
-          </>
+          </div>
         )}
-        <button
-          onClick={handleLogout}
-          className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-danger/10 hover:text-danger"
-        >
-          <LogOut className="h-4 w-4" />
-          Sign out
-        </button>
+
+        <div className="space-y-1">
+          <Link
+            to="/"
+            target="_blank"
+            rel="noreferrer"
+            className="flex w-full items-center justify-between rounded-lg border border-border/80 bg-surface-2/60 px-3 py-2 text-xs font-medium text-muted transition-colors hover:border-accent/40 hover:bg-surface-2 hover:text-foreground"
+          >
+            <span className="flex items-center gap-2">
+              <Globe className="h-4 w-4 text-accent" />
+              Visit Website
+            </span>
+            <ExternalLink className="h-3 w-3 text-muted" />
+          </Link>
+
+          <button
+            onClick={handleLogout}
+            className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-danger/10 hover:text-danger"
+          >
+            <LogOut className="h-4 w-4" />
+            Sign out
+          </button>
+        </div>
       </div>
     </aside>
   );

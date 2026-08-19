@@ -3,7 +3,9 @@ import {
   Phone,
   Mail,
   Clock,
+  LogIn,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
 import { useWebsiteContent } from "./useWebsiteContent";
 
@@ -93,9 +95,17 @@ export function ContactSection() {
           <p>
             © {new Date().getFullYear()} {name}. All rights reserved.
           </p>
-          <p className="text-xs">
-            Crafted with care by DineFlow OS
-          </p>
+          <div className="flex flex-wrap items-center justify-center gap-3 text-xs">
+            <span>Crafted with care by DineFlow OS</span>
+            <span className="text-border">•</span>
+            <Link
+              to="/pos"
+              className="inline-flex items-center gap-1 text-muted hover:text-accent transition-colors"
+            >
+              <LogIn className="h-3 w-3" />
+              <span>Staff Sign In (POS)</span>
+            </Link>
+          </div>
         </div>
       </footer>
     </>

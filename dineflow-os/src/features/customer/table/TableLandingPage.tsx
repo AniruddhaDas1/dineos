@@ -47,7 +47,7 @@ export function TableLandingPage() {
         />
       )}
       <div className="absolute top-0 h-72 w-full bg-gradient-to-b from-transparent to-background" />
-      <div className="relative z-10 p-6 pt-40">
+      <div className="relative z-10 p-6 pt-40 md:mx-auto md:max-w-2xl">
         {restaurant ? (
           <>
             <p className="font-serif text-3xl">{restaurant.name}</p>

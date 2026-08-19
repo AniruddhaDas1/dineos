@@ -27,7 +27,7 @@ export function FeedbackPage() {
   }
 
   return (
-    <div className="p-5">
+    <div className="p-5 md:mx-auto md:max-w-2xl">
       <TopBar title="Feedback" />
       <div className="mt-6 text-center">
         {done ? (

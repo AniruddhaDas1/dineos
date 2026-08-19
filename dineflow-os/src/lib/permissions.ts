@@ -37,6 +37,8 @@ export const ALL_PERMISSIONS: Permission[] = [
   "reservations:create",
   "reservations:edit",
   "menu:manage",
+  "marketing:view",
+  "marketing:manage",
 
   "settings:view",
   "settings:manage",

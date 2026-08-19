@@ -4,6 +4,7 @@ import { AlertTriangle, X, Clock } from "lucide-react";
 import { services } from "@/services";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/cn";
 import { Button } from "@/components/ui/button";
 import type { Feedback } from "@/services/types";
 
@@ -102,7 +103,7 @@ export function AlertBanner() {
               )}
               <div className="mt-1.5 flex flex-wrap gap-1">
                 {alert.topics.map((t) => (
-                  <Badge key={t} variant="secondary" className="text-xs">
+                  <Badge key={t} variant="outline" className="text-xs">
                     {t}
                   </Badge>
                 ))}

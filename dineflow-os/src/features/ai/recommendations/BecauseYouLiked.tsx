@@ -1,16 +1,23 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Clock, Star } from "lucide-react";
+import { Clock, Star, Plus } from "lucide-react";
 import { useAIStore } from "@/stores/ai.store";
 import { useSessionStore } from "@/stores/session.store";
+import { useCartStore } from "@/stores/cart.store";
+import { useOrderContext } from "@/lib/orderContext";
 import { services } from "@/services";
 import { Skeleton } from "@/components/ui/skeleton";
 import { VegMark } from "@/features/customer/components/VegMark";
 import { formatCurrency } from "@/lib/format";
+import type { MenuItem } from "@/services/types";
 
 export function BecauseYouLiked() {
   const { recommendations, loadingRecommendations } = useAIStore();
   const customer = useSessionStore((s) => s.customer);
+  const addFromItem = useCartStore((s) => s.addFromItem);
+  const navigate = useNavigate();
+  const { base } = useOrderContext();
   const [lastItem, setLastItem] = useState<string | null>(null);
 
   useEffect(() => {
@@ -22,6 +29,15 @@ export function BecauseYouLiked() {
       }
     });
   }, [customer?.mobile]);
+
+  function add(item: MenuItem) {
+    const hasRequiredAddOns = item.addOnGroups?.some((g) => g.required);
+    if (hasRequiredAddOns) {
+      navigate(`${base}/item/${item.id}`);
+      return;
+    }
+    addFromItem(item, 1, [], "");
+  }
 
   if (!customer?.mobile) return null;
   if (loadingRecommendations && recommendations.length === 0) {
@@ -55,7 +71,8 @@ export function BecauseYouLiked() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.05 }}
-            className="group relative overflow-hidden rounded-xl border border-border bg-surface p-3 transition-shadow hover:shadow-md"
+            onClick={() => navigate(`${base}/item/${rec.item.id}`)}
+            className="group relative cursor-pointer overflow-hidden rounded-xl border border-border bg-surface p-3 transition-shadow hover:shadow-md"
           >
             <div className="flex items-start gap-3">
               <img
@@ -82,6 +99,17 @@ export function BecauseYouLiked() {
                 {rec.item.rating.toFixed(1)}
               </div>
             )}
+            <button
+              aria-label={`Add ${rec.item.name} to cart`}
+              disabled={!rec.item.available}
+              onClick={(e) => {
+                e.stopPropagation();
+                add(rec.item);
+              }}
+              className="absolute bottom-2 right-2 flex h-8 w-8 items-center justify-center rounded-full bg-accent text-accent-foreground opacity-0 shadow-sm transition-opacity group-hover:opacity-100 disabled:opacity-30"
+            >
+              <Plus className="h-4 w-4" />
+            </button>
           </motion.div>
         ))}
       </div>

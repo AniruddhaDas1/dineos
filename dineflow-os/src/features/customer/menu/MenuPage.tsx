@@ -108,7 +108,7 @@ export function MenuPage() {
             </button>
           ))}
         </div>
-        <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1">
+        <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 md:flex-wrap md:overflow-visible">
           {cats.map((c) => (
             <button
               key={c.id}
@@ -145,7 +145,7 @@ export function MenuPage() {
               className="mb-8 scroll-mt-44"
             >
               <h2 className="mb-3 font-serif text-xl">{c.name}</h2>
-              <div className="space-y-3">
+              <div className="space-y-3 md:grid md:grid-cols-2 md:gap-3 md:space-y-0 xl:grid-cols-3">
                 {list.map((it) => (
                   <button
                     key={it.id}

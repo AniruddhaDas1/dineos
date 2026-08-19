@@ -1,16 +1,18 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Printer, Check, CreditCard, ChevronDown } from "lucide-react";
+import { ArrowLeft, Printer, Check, CreditCard, ChevronDown, Plus, Search, Minus } from "lucide-react";
 import { services } from "@/services";
 import { usePosStore } from "@/stores/pos.store";
 import { formatCurrency } from "@/lib/format";
 import { usePermission } from "@/lib/permissions";
 import { printBill } from "@/lib/print";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { OrderStatusBadge } from "../components/OrderStatusBadge";
 import { ChannelBadge } from "../components/ChannelBadge";
-import type { Order, OrderStatus } from "@/services/types";
+import type { CartLine, MenuItem, Order, OrderStatus } from "@/services/types";
 
 
 const STATUS_FLOW: OrderStatus[] = [
@@ -29,6 +31,7 @@ export function OrderDetailPage() {
   const [showBill, setShowBill] = useState(false);
   const [paid, setPaid] = useState(false);
   const [verifying, setVerifying] = useState(false);
+  const [addItemsOpen, setAddItemsOpen] = useState(false);
   const canAdvance = usePermission("orders:advance");
   const canBill = usePermission("orders:bill");
   const canPrint = usePermission("orders:print");
@@ -55,6 +58,13 @@ export function OrderDetailPage() {
     await services.order.updateOrderStatus(orderId, next);
     const updated = await services.order.getOrder(orderId);
     if (updated) setOrder(updated);
+    refresh();
+  }
+
+  async function addItems(lines: CartLine[]) {
+    const updated = await services.order.addItemsToOrder(orderId, lines);
+    if (updated) setOrder(updated);
+    setAddItemsOpen(false);
     refresh();
   }
 
@@ -161,9 +171,16 @@ export function OrderDetailPage() {
 
       {/* Order items */}
       <div className="mt-6 rounded-xl border border-border bg-surface p-6">
-        <p className="mb-4 text-xs uppercase tracking-widest text-muted">
-          Items
-        </p>
+        <div className="mb-4 flex items-center justify-between">
+          <p className="text-xs uppercase tracking-widest text-muted">
+            Items
+          </p>
+          {canBill && (
+            <Button size="sm" variant="outline" className="gap-1" onClick={() => setAddItemsOpen(true)}>
+              <Plus className="h-4 w-4" /> Add Items
+            </Button>
+          )}
+        </div>
         <div className="space-y-3">
           {order.lines.map((line) => (
             <div
@@ -247,7 +264,131 @@ export function OrderDetailPage() {
       {showBill && (
         <BillView order={order} paid={paid} verifying={verifying} canBill={canBill} onMarkPaid={markPaid} />
       )}
+
+      {/* Add items dialog */}
+      <AddItemsDialog
+        open={addItemsOpen}
+        onOpenChange={setAddItemsOpen}
+        onAdd={addItems}
+      />
     </div>
+  );
+}
+
+function AddItemsDialog({
+  open,
+  onOpenChange,
+  onAdd,
+}: {
+  open: boolean;
+  onOpenChange: (o: boolean) => void;
+  onAdd: (lines: CartLine[]) => void;
+}) {
+  const [items, setItems] = useState<MenuItem[]>([]);
+  const [query, setQuery] = useState("");
+  const [selected, setSelected] = useState<Record<string, number>>({});
+
+  useEffect(() => {
+    if (open) {
+      services.menu.getMenuItems().then(setItems);
+      setSelected({});
+      setQuery("");
+    }
+  }, [open]);
+
+  const filtered = items.filter((it) => {
+    if (!it.available) return false;
+    return !query || it.name.toLowerCase().includes(query.toLowerCase());
+  });
+
+  function changeQty(id: string, delta: number) {
+    setSelected((prev) => {
+      const next = { ...prev };
+      const qty = (next[id] ?? 0) + delta;
+      if (qty <= 0) delete next[id];
+      else next[id] = qty;
+      return next;
+    });
+  }
+
+  function handleAdd() {
+    const lines: CartLine[] = items
+      .filter((it) => (selected[it.id] ?? 0) > 0)
+      .map((it) => {
+        const addOns = (it.addOnGroups ?? []).flatMap((g) => g.options.filter((o) => o.selected));
+        const unitPrice = it.price + addOns.reduce((s, a) => s + a.price, 0);
+        return {
+          id: `${it.id}|${addOns.map((a) => a.id).sort().join("|")}`,
+          itemId: it.id,
+          name: it.name,
+          basePrice: it.price,
+          selectedAddOns: addOns,
+          quantity: selected[it.id],
+          unitPrice,
+        };
+      });
+    onAdd(lines);
+  }
+
+  const totalCount = Object.values(selected).reduce((s, n) => s + n, 0);
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-h-[80vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>Add Items to Order</DialogTitle>
+        </DialogHeader>
+
+        <div className="relative">
+          <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted" />
+          <Input
+            className="pl-9"
+            placeholder="Search menu…"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+        </div>
+
+        <div className="space-y-2">
+          {filtered.map((item) => {
+            const qty = selected[item.id] ?? 0;
+            return (
+              <div key={item.id} className="flex items-center justify-between rounded-lg border border-border bg-surface-2 p-3">
+                <div className="min-w-0">
+                  <p className="text-sm font-medium">{item.name}</p>
+                  <p className="text-xs text-muted">{formatCurrency(item.price)}</p>
+                </div>
+                {qty === 0 ? (
+                  <Button size="sm" variant="ghost" className="h-8 w-8 text-accent" onClick={() => changeQty(item.id, 1)}>
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <Button size="sm" variant="ghost" className="h-8 w-8" onClick={() => changeQty(item.id, -1)}>
+                      <Minus className="h-4 w-4" />
+                    </Button>
+                    <span className="w-6 text-center text-sm">{qty}</span>
+                    <Button size="sm" variant="ghost" className="h-8 w-8" onClick={() => changeQty(item.id, 1)}>
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+          {filtered.length === 0 && (
+            <p className="py-8 text-center text-muted">No matching items.</p>
+          )}
+        </div>
+
+        <div className="flex items-center justify-end gap-2 border-t border-border pt-4">
+          <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
+          <Button disabled={totalCount === 0} onClick={handleAdd}>
+            <Plus className="mr-2 h-4 w-4" /> Add {totalCount} item{totalCount !== 1 ? "s" : ""}
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
 

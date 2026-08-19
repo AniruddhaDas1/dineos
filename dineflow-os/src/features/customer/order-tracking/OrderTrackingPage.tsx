@@ -42,7 +42,7 @@ export function OrderTrackingPage() {
   return (
     <div className="pb-40">
       <TopBar title={`Table ${activeOrder.tableNumber}`} />
-      <div className="p-5">
+      <div className="p-5 md:mx-auto md:max-w-2xl">
         <p className="text-xs uppercase tracking-widest text-muted">
           Order status
         </p>

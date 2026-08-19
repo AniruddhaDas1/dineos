@@ -1,17 +1,24 @@
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Sparkles, TrendingUp } from "lucide-react";
+import { Sparkles, TrendingUp, Plus } from "lucide-react";
 import { useAIStore } from "@/stores/ai.store";
 import { useSessionStore } from "@/stores/session.store";
+import { useCartStore } from "@/stores/cart.store";
+import { useOrderContext } from "@/lib/orderContext";
 import { formatCurrency } from "@/lib/format";
 import { VegMark } from "@/features/customer/components/VegMark";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import type { MenuItem } from "@/services/types";
 
 export function RecommendationBanner() {
   const { recommendations, trending, loadingRecommendations, loadRecommendations, loadTrending } =
     useAIStore();
   const customer = useSessionStore((s) => s.customer);
+  const addFromItem = useCartStore((s) => s.addFromItem);
+  const navigate = useNavigate();
+  const { base } = useOrderContext();
 
   useEffect(() => {
     if (customer?.mobile) {
@@ -22,6 +29,15 @@ export function RecommendationBanner() {
   }, [customer?.mobile, loadRecommendations, loadTrending]);
 
   const items = customer?.mobile ? recommendations : trending;
+
+  function add(item: MenuItem) {
+    const hasRequiredAddOns = item.addOnGroups?.some((g) => g.required);
+    if (hasRequiredAddOns) {
+      navigate(`${base}/item/${item.id}`);
+      return;
+    }
+    addFromItem(item, 1, [], "");
+  }
 
   if (loadingRecommendations) {
     return (
@@ -50,7 +66,7 @@ export function RecommendationBanner() {
           <TrendingUp className="h-5 w-5 text-accent" />
         )}
         <h3 className="font-serif text-lg">
-          {customer?.mobile ? "Recommended for You" : "Trending Now"}
+          {customer?.mobile ? "Recommended" : "Trending Now"}
         </h3>
       </div>
 
@@ -61,7 +77,8 @@ export function RecommendationBanner() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.05 }}
-            className="group relative overflow-hidden rounded-xl border border-border bg-surface p-3 transition-shadow hover:shadow-md"
+            onClick={() => navigate(`${base}/item/${rec.item.id}`)}
+            className="group relative cursor-pointer overflow-hidden rounded-xl border border-border bg-surface p-3 transition-shadow hover:shadow-md"
           >
             <div className="flex items-start gap-3">
               <img
@@ -89,6 +106,18 @@ export function RecommendationBanner() {
                 {rec.item.badges[0]}
               </Badge>
             )}
+
+            <button
+              aria-label={`Add ${rec.item.name} to cart`}
+              disabled={!rec.item.available}
+              onClick={(e) => {
+                e.stopPropagation();
+                add(rec.item);
+              }}
+              className="absolute bottom-2 right-2 flex h-8 w-8 items-center justify-center rounded-full bg-accent text-accent-foreground opacity-0 shadow-sm transition-opacity group-hover:opacity-100 disabled:opacity-30"
+            >
+              <Plus className="h-4 w-4" />
+            </button>
           </motion.div>
         ))}
       </div>

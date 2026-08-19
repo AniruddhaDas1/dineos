@@ -58,7 +58,7 @@ export function BillPage() {
   return (
     <div className="pb-40">
       <TopBar title="Bill" />
-      <div className="p-5">
+      <div className="p-5 md:mx-auto md:max-w-2xl">
         <p className="font-serif text-xl">Saffron &amp; Smoke</p>
         <p className="text-xs text-muted">
           {activeOrder.tableId === "online" 
@@ -146,7 +146,7 @@ export function BillPage() {
             </Button>
           </div>
         ) : (
-          <div className="fixed bottom-0 left-1/2 z-40 w-full max-w-md -translate-x-1/2 space-y-2 border-t border-border bg-surface p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+          <div className="fixed bottom-0 left-1/2 z-40 w-full max-w-md -translate-x-1/2 space-y-2 border-t border-border bg-surface p-4 pb-[max(1rem,env(safe-area-inset-bottom))] md:max-w-xl">
             <Button 
               className="w-full" 
               size="lg" 

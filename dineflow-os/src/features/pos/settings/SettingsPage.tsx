@@ -41,6 +41,8 @@ const PERMISSION_LABELS: Record<Permission, string> = {
   "reservations:create": "Create Reservations",
   "reservations:edit": "Edit Reservations",
   "menu:manage": "Manage Menu",
+  "marketing:view": "View Marketing",
+  "marketing:manage": "Manage Marketing",
   "settings:view": "View Settings",
   "settings:manage": "Manage Permissions",
   "aggregator:simulate": "Simulate Aggregator Orders",
@@ -58,6 +60,7 @@ const PERMISSION_GROUPS: { label: string; permissions: Permission[] }[] = [
   { label: "POS", permissions: ["pos:instant"] },
   { label: "Reservations", permissions: ["reservations:view", "reservations:create", "reservations:edit"] },
   { label: "Menu", permissions: ["menu:manage"] },
+  { label: "Marketing", permissions: ["marketing:view", "marketing:manage"] },
   { label: "Settings", permissions: ["settings:view", "settings:manage"] },
   { label: "Operations", permissions: ["aggregator:simulate", "kds:view"] },
 ];
@@ -304,4 +307,5 @@ const FEATURE_TOGGLES: { key: keyof PosFeatures; label: string; desc: string }[]
   { key: "onlineOrders", label: "Online Orders Hub", desc: "Accept/reject incoming Zomato/Swiggy orders" },
   { key: "reservations", label: "Reservations", desc: "Schedule, assign, and manage table reservations" },
   { key: "websiteBuilder", label: "Website Builder", desc: "Build & customize the public-facing landing page" },
+  { key: "marketing", label: "Marketing Automations", desc: "Campaigns, automations, and templates across WhatsApp, SMS & Email" },
 ];

@@ -1,6 +1,6 @@
 # 🧠 DineFlow OS — Project Memory
 
-> **Last updated:** 2026-07-13
+> **Last updated:** 2026-08-18
 > **Purpose:** Single source of truth for all agents working on this repo.
 > Read this FIRST before doing anything. Update it when you finish work.
 
@@ -12,19 +12,19 @@ DineFlow OS is a **full-stack restaurant management platform** with two apps:
 1. **`dineflow-os/`** — React 19 + Vite 8 PWA (the main product). Multi-surface: customer ordering, POS back-office (with RBAC), KDS kitchen display, marketing website.
 2. **`my-api-worker/`** — Cloudflare Workers API (Hono + Chanfana). Seeded from a template; currently a generic task CRUD — **not yet integrated** with dineflow-os.
 
-**All phases (1–10) are built. RBAC + admin configuration system is active. Website Builder with 10 templates is live. Build is green, 104 tests pass.**
+**All phases (1–10) are built. RBAC + admin configuration system is active. Website Builder with 10 templates is live. Marketing Automations (WhatsApp/SMS/Email) is live. Build is green, 111 tests pass.**
 
 ---
 
-## 🚦 Current Status (as of 2026-07-31)
+## 🚦 Current Status (as of 2026-08-18)
 
 | Check | Status | Notes |
 |-------|--------|-------|
-| **Tests** | ✅ 104/104 passing | `npx vitest run` — 12 test files (5 new AI service tests) |
+| **Tests** | ✅ 111/111 passing | `npx vitest run` — 13 test files (7 new marketing service tests) |
 | **TypeScript build** | ✅ GREEN | Zero type errors |
 | **Production build** | ✅ GREEN | Builds and outputs to `dist/` |
-| **Lint** | ✅ 0 errors | 24 warnings (react-hooks exhaustive-deps, fast-refresh patterns) |
-| **Git** | ✅ Clean | All 5 commits; working tree clean (only tool dirs + .DS_Store untracked) |
+| **Lint** | ✅ 0 errors | 25 warnings (react-hooks exhaustive-deps, fast-refresh patterns) |
+| **Git** | ✅ Dirty | Marketing Automations module + memory updates uncommitted |
 
 ---
 
@@ -324,6 +324,7 @@ npx wrangler deploy  # Deploy to Cloudflare
 | 2026-07-13 | ZCode (GLM-5.2) | **Major: Website Builder with 10 Templates.** Added `website:build` permission (27 total). Created 10 full-website templates (Fine Dining, Food Cart, Gourmet, Café, Pizzeria, Bakery, Bar & Grill, Sushi, Food Truck, Vegan) each with distinct color scheme and niche content. Created `website.store` (persisted Zustand), `websiteTheme.ts` (CSS variable injection), `color.ts` (hex↔HSL triplet conversion). Built full Builder UI: TemplateGallery, ContentEditor (name/tagline/story/menu/gallery/reviews/contact/hours/social with add/remove), ThemeEditor (8 color pickers), SavedWebsites (set active/edit/delete). Added Radix Tabs UI primitive. Refactored all 7 website sections to use `useWebsiteContent()` hook instead of static data. Public site now dynamically renders active config content and theme. Verified: tsc clean, build green, 35/35 tests pass, Playwright headless confirms no runtime errors. |
 | 2026-07-31 | ZCode (GLM-5.2) | **Phase 10 completion + lint fixes + tests**: Completed all 10 remaining Phase 10 AI components (BecauseYouLiked, TrendingNow, PeakHoursIndicator, InventoryAlert, PricingInsight, LoyaltyReward, QuickReply, OrderSummary, AlertBanner, FeedbackCard) and integrated them into MenuPage, DashboardPage, CartPage, ChatBot, and FeedbackPanel. Fixed 2 lint errors (rules-of-hooks: `usePermission` called inside `.some()`/`.filter()` callbacks in PermissionGate.tsx and Sidebar.tsx — replaced with direct store access). Fixed NLU bug: `extractQuantity` used `includes()` for word-number matching, matching "a" inside "add" — switched to word-boundary regex. Added `formatHour` helper. Added 5 new AI service test files (69 new tests: recommendation, forecast, pricing, NLU, sentiment). Tests now 104/104 passing, 12 test files. Updated permission count to 30. |
 | 2026-07-31 | ZCode (GLM-5.2) | **Security audit — 3 critical vulnerabilities fixed**: (1) Stored XSS in `print.tsx` — added `escapeHtml()` helper and applied to all interpolated values (restaurant fields, order ID, line names, add-ons); wrapped `JSON.parse(localStorage)` in try/catch; added `noopener,noreferrer` to `window.open`. (2) Plaintext PIN in localStorage — added `partialize` to zustand persist in `posAuth.store.ts` to strip `pin` from serialized state. (3) Rules-of-hooks violations in `PermissionGate.tsx`/`.tsx:17` and `Sidebar.tsx:53` — moved `usePermission` out of `.some()`/`.filter()` callbacks. Verified: tsc 0 errors, 104/104 tests, build green, oxlint 0 errors. Committed in 4 commits (3b3100f, 82ae142, 83e6264, 6eecf1e). |
+| 2026-08-18 | ZCode | **Marketing Automations module.** Added `MarketingService` interface + `mockMarketingService` with WhatsApp/SMS/Email campaigns, rule-based automations, templates, message logs, and analytics. Added `marketing.store.ts`. Built `/pos/marketing` UI (Overview, Campaigns, Automations, Templates, Activity) with RBAC via `marketing:view`/`marketing:manage` (admin/executive/manager). Added sidebar entry, route, feature toggle, settings matrix group, and 7 service tests. Fixed `PeakHoursIndicator` empty-forecast crash and 3 pre-existing type errors. Verified: tsc 0 errors, 111/111 tests, build green, oxlint 0 errors. |
 
 ---
 

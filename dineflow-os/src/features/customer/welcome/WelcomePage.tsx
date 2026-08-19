@@ -32,7 +32,7 @@ export function WelcomePage() {
         className="absolute inset-0 h-full w-full object-cover opacity-60"
       />
       <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-transparent" />
-      <div className="relative z-10 p-6 pb-[max(2rem,env(safe-area-inset-bottom))]">
+      <div className="relative z-10 p-6 pb-[max(2rem,env(safe-area-inset-bottom))] md:mx-auto md:max-w-xl md:p-10">
         <p className="font-serif text-3xl leading-tight text-foreground">
           Saffron &amp; Smoke
         </p>

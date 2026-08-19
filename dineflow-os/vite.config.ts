@@ -29,6 +29,7 @@ window.$RefreshSig$ = () => (type) => type;`;
 }
 
 export default defineConfig({
+  base: "./",
   plugins: [
     react(),
     reactRefreshPreamble(),

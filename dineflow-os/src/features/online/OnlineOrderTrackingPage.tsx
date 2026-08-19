@@ -87,7 +87,7 @@ export function OnlineOrderTrackingPage() {
       <TopBar title="Order Tracking" />
 
       {/* Channel header */}
-      <div className="flex items-center gap-2 bg-surface px-4 py-3">
+      <div className="flex items-center gap-2 bg-surface px-4 py-3 md:justify-center">
         {channel === "delivery" ? (
           <Bike className="h-4 w-4 text-accent" />
         ) : (
@@ -98,7 +98,7 @@ export function OnlineOrderTrackingPage() {
         </span>
       </div>
 
-      <div className="p-4">
+      <div className="p-4 md:mx-auto md:max-w-2xl">
         {/* Progress steps */}
         <div className="space-y-4 py-4">
           {STATUS_STEPS.map((step, i) => {

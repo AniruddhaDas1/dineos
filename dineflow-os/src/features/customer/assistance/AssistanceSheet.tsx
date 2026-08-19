@@ -38,7 +38,7 @@ export function AssistanceSheet() {
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger asChild>
           {hasOrder && (
-            <button className="fixed bottom-24 right-4 z-30 flex h-12 w-12 items-center justify-center rounded-full bg-surface-2 text-foreground shadow-lg border border-border">
+            <button className="fixed bottom-24 right-4 z-30 flex h-12 w-12 items-center justify-center rounded-full bg-surface-2 text-foreground shadow-lg border border-border md:right-1/2 md:translate-x-[31rem]">
               <Hand className="h-5 w-5" />
             </button>
           )}

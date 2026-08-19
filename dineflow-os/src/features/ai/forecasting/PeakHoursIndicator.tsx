@@ -24,7 +24,7 @@ export function PeakHoursIndicator() {
     }
   }, [hourlyForecast.length, loadHourlyForecast]);
 
-  if (loadingForecast && hourlyForecast.length === 0) {
+  if (loadingForecast || hourlyForecast.length === 0) {
     return (
       <div className="rounded-xl border border-border bg-surface p-5">
         <Skeleton className="h-5 w-40 mb-4" />

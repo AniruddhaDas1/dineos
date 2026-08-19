@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LogIn } from "lucide-react";
 import { HeroSection } from "./HeroSection";
 import { StorySection } from "./StorySection";
 import { MenuPreviewSection } from "./MenuPreviewSection";
@@ -72,7 +72,7 @@ function Navbar() {
         </a>
 
         {/* Desktop nav */}
-        <div className="hidden items-center gap-8 md:flex">
+        <div className="hidden items-center gap-6 lg:gap-8 md:flex">
           {NAV_LINKS.map((link) => (
             <a
               key={link.href}
@@ -83,12 +83,21 @@ function Navbar() {
               {link.label}
             </a>
           ))}
-          <Link
-            to="/order"
-            className="rounded-lg border border-accent bg-accent/10 px-4 py-2 text-sm uppercase tracking-widest text-accent transition-colors hover:bg-accent hover:text-accent-foreground"
-          >
-            Order Now
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link
+              to="/pos"
+              className="flex items-center gap-1.5 rounded-lg border border-border/80 bg-surface/50 px-3.5 py-2 text-xs uppercase tracking-widest text-muted transition-colors hover:border-accent/40 hover:bg-surface hover:text-foreground"
+            >
+              <LogIn className="h-3.5 w-3.5 text-accent" />
+              <span>Sign In</span>
+            </Link>
+            <Link
+              to="/order"
+              className="rounded-lg border border-accent bg-accent/10 px-4 py-2 text-sm uppercase tracking-widest text-accent transition-colors hover:bg-accent hover:text-accent-foreground"
+            >
+              Order Now
+            </Link>
+          </div>
         </div>
 
         {/* Mobile toggle */}
@@ -106,7 +115,7 @@ function Navbar() {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="fixed inset-0 top-0 z-50 flex flex-col items-center justify-center gap-8 bg-background/98 md:hidden"
+          className="fixed inset-0 top-0 z-50 flex flex-col items-center justify-center gap-6 bg-background/98 px-6 md:hidden"
         >
           <button
             className="absolute top-4 right-6 text-foreground"
@@ -115,7 +124,7 @@ function Navbar() {
           >
             <X className="h-6 w-6" />
           </button>
-          <span className="font-serif text-xl text-accent">
+          <span className="font-serif text-2xl text-accent mb-2">
             {name}
           </span>
           {NAV_LINKS.map((link) => (
@@ -123,18 +132,28 @@ function Navbar() {
               key={link.href}
               href={link.href}
               onClick={(e) => handleNav(e, link.href)}
-              className="text-lg uppercase tracking-widest text-foreground"
+              className="text-base uppercase tracking-widest text-foreground hover:text-accent"
             >
               {link.label}
             </a>
           ))}
-          <Link
-            to="/order"
-            onClick={() => setMobileOpen(false)}
-            className="mt-4 rounded-lg bg-accent px-6 py-3 text-sm uppercase tracking-widest text-accent-foreground"
-          >
-            Order Now
-          </Link>
+          <div className="flex flex-col gap-3 w-full max-w-xs mt-4">
+            <Link
+              to="/order"
+              onClick={() => setMobileOpen(false)}
+              className="w-full text-center rounded-lg bg-accent px-6 py-3 text-sm uppercase tracking-widest font-semibold text-accent-foreground shadow"
+            >
+              Order Now
+            </Link>
+            <Link
+              to="/pos"
+              onClick={() => setMobileOpen(false)}
+              className="flex items-center justify-center gap-2 w-full rounded-lg border border-border bg-surface px-6 py-2.5 text-sm uppercase tracking-widest text-muted hover:text-foreground hover:border-accent/40"
+            >
+              <LogIn className="h-4 w-4 text-accent" />
+              Sign In (POS)
+            </Link>
+          </div>
         </motion.div>
       )}
     </nav>

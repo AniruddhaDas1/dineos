@@ -13,7 +13,7 @@ export function CartBar() {
   // Hide on item-detail page so it doesn't overlap the action bar
   if (count === 0 || /\/item\//.test(location.pathname)) return null;
   return (
-    <div className="fixed bottom-0 left-1/2 z-40 w-full max-w-md -translate-x-1/2 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+    <div className="fixed bottom-0 left-1/2 z-40 w-full max-w-md -translate-x-1/2 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] md:max-w-xl">
       <button
         onClick={() =>
           navigate(isOnline ? `${base}/cart` : `${base}/cart`)

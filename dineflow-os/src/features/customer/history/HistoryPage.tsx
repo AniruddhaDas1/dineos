@@ -27,7 +27,7 @@ export function HistoryPage() {
   return (
     <div>
       <TopBar title="Your Orders" />
-      <div className="p-4">
+      <div className="p-4 md:mx-auto md:max-w-2xl">
         {/* Loyalty + stats */}
         {profile ? (
           <div className="mb-4 space-y-4">

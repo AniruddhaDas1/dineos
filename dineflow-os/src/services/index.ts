@@ -24,6 +24,19 @@ import type {
   PricingService,
   NLPUnderstandingService,
   SentimentService,
+  MarketingChannel,
+  MarketingAudience,
+  MarketingTemplate,
+  MarketingCampaign,
+  MarketingAutomation,
+  MarketingMessageLog,
+  MarketingAnalytics,
+  MarketingService,
+  VoiceCallLog,
+  VoiceCallScript,
+  VoiceCallService,
+  Appointment,
+  AppointmentService,
 } from "./types";
 
 export type {
@@ -52,6 +65,19 @@ export type {
   PricingService,
   NLPUnderstandingService,
   SentimentService,
+  MarketingChannel,
+  MarketingAudience,
+  MarketingTemplate,
+  MarketingCampaign,
+  MarketingAutomation,
+  MarketingMessageLog,
+  MarketingAnalytics,
+  MarketingService,
+  VoiceCallLog,
+  VoiceCallScript,
+  VoiceCallService,
+  Appointment,
+  AppointmentService,
 };
 
 export type Unsubscribe = () => void;
@@ -96,6 +122,7 @@ export interface OrderService {
     customer: Customer
   ): Promise<Order | undefined>;
   updateOrderStatus(orderId: string, status: OrderStatus): Promise<void>;
+  addItemsToOrder(orderId: string, lines: CartLine[]): Promise<Order | undefined>;
   cancelOrder(orderId: string): Promise<void>;
   subscribeToStatus(
     orderId: string,
@@ -145,6 +172,9 @@ export interface Services {
   pricing: PricingService;
   nlp: NLPUnderstandingService;
   sentiment: SentimentService;
+  marketing: MarketingService;
+  voiceCall: VoiceCallService;
+  appointment: AppointmentService;
 }
 
 import { mockMenuService } from "./mock/mockMenuService";
@@ -161,6 +191,9 @@ import { mockForecastService } from "./mock/mockForecastService";
 import { mockPricingService } from "./mock/mockPricingService";
 import { mockNLUService } from "./mock/mockNLUService";
 import { mockSentimentService } from "./mock/mockSentimentService";
+import { mockMarketingService } from "./mock/mockMarketingService";
+import { mockVoiceCallService } from "./mock/mockVoiceCallService";
+import { mockAppointmentService } from "./mock/mockAppointmentService";
 
 // DI seam: swap mock for firebase later without touching UI/stores.
 export const services: Services = {
@@ -178,5 +211,8 @@ export const services: Services = {
   pricing: mockPricingService,
   nlp: mockNLUService,
   sentiment: mockSentimentService,
+  marketing: mockMarketingService,
+  voiceCall: mockVoiceCallService,
+  appointment: mockAppointmentService,
 };
 

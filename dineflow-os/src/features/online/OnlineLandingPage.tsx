@@ -82,7 +82,7 @@ export function OnlineLandingPage() {
         </div>
       </div>
 
-      <div className="space-y-6 p-4">
+      <div className="space-y-6 p-4 md:mx-auto md:max-w-2xl">
         {/* Identity */}
         <section className="space-y-3">
           <p className="text-xs font-medium uppercase tracking-wider text-muted">
@@ -217,7 +217,7 @@ export function OnlineLandingPage() {
       </div>
 
       {/* CTA */}
-      <div className="fixed bottom-0 left-1/2 z-40 w-full max-w-md -translate-x-1/2 border-t border-border bg-surface p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+      <div className="fixed bottom-0 left-1/2 z-40 w-full max-w-md -translate-x-1/2 border-t border-border bg-surface p-4 pb-[max(1rem,env(safe-area-inset-bottom))] md:max-w-xl">
         <Button
           className="w-full"
           size="lg"

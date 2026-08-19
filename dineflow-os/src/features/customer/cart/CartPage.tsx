@@ -105,7 +105,7 @@ export function CartPage() {
           ) : undefined
         }
       />
-      <div className="p-4">
+      <div className="p-4 md:mx-auto md:max-w-2xl">
         {lines.length === 0 ? (
           <p className="py-20 text-center text-muted">Your cart is empty.</p>
         ) : (
@@ -254,7 +254,7 @@ export function CartPage() {
       </div>
 
       {lines.length > 0 && (
-        <div className="fixed bottom-0 left-1/2 z-40 w-full max-w-md -translate-x-1/2 border-t border-border bg-surface p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+        <div className="fixed bottom-0 left-1/2 z-40 w-full max-w-md -translate-x-1/2 border-t border-border bg-surface p-4 pb-[max(1rem,env(safe-area-inset-bottom))] md:max-w-xl">
           <Button className="w-full" size="lg" onClick={place}>
             Place Order · {formatCurrency(totals.total)}
           </Button>

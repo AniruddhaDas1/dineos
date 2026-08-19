@@ -7,6 +7,7 @@ export interface PosFeatures {
   onlineOrders: boolean;
   reservations: boolean;
   websiteBuilder: boolean;
+  marketing: boolean;
 }
 
 interface PosSettingsState {
@@ -24,6 +25,7 @@ export const usePosSettingsStore = create<PosSettingsState>()(
         onlineOrders: true,
         reservations: true,
         websiteBuilder: true,
+        marketing: true,
       },
 
       toggle(feature) {

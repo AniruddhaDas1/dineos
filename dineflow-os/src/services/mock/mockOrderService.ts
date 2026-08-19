@@ -1,5 +1,6 @@
 import type { OrderService, PlaceOrderInput } from "../index";
 import type { Order, OrderStatus } from "@/services/types";
+import { restaurant } from "@/data/restaurant";
 import { recordOrder } from "./mockCustomerService";
 import { processRecipeDeduction } from "./mockInventoryService";
 
@@ -223,6 +224,40 @@ export const mockOrderService: OrderService & { __reset: () => void } = {
     if (order) {
       orders.set(orderId, { ...order, status });
     }
+  },
+
+  async addItemsToOrder(orderId, lines) {
+    const order = orders.get(orderId);
+    if (!order) return undefined;
+
+    const merged = [...order.lines];
+    for (const line of lines) {
+      const match = merged.find((l) => l.id === line.id);
+      if (match) {
+        match.quantity += line.quantity;
+      } else {
+        merged.push(line);
+      }
+    }
+
+    const subtotal = +merged
+      .reduce((s, l) => s + l.unitPrice * l.quantity, 0)
+      .toFixed(2);
+    const gst = +(subtotal * (restaurant.gstPercent / 100)).toFixed(2);
+    const serviceCharge = +(subtotal * (restaurant.serviceChargePercent / 100)).toFixed(2);
+    const total = +(subtotal + gst + serviceCharge + (order.deliveryFee ?? 0)).toFixed(2);
+
+    const updated: Order = {
+      ...order,
+      lines: merged,
+      subtotal,
+      gst,
+      serviceCharge,
+      total,
+    };
+    orders.set(orderId, updated);
+    processRecipeDeduction(lines);
+    return updated;
   },
 
   async cancelOrder(orderId) {

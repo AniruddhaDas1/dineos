@@ -83,99 +83,102 @@ export function ItemDetailPage() {
 
   return (
     <div className="pb-32">
-      {/* Hero image */}
-      <div className="relative">
-        <img
-          src={item.image}
-          alt={item.name}
-          className="h-64 w-full object-cover"
-        />
-        <div className="absolute inset-0 h-full w-full bg-gradient-to-t from-background to-transparent" />
-        <div className="absolute inset-x-0 top-0">
-          <TopBar />
-        </div>
-      </div>
+      <TopBar />
 
-      {/* Item info */}
-      <div className="-mt-10 relative z-10 space-y-4 p-5">
-        <div className="flex items-center gap-2">
-          <VegMark type={item.vegType} />
-          <h1 className="font-serif text-2xl">{item.name}</h1>
-        </div>
-        <p className="text-sm text-muted">{item.description}</p>
-        <div className="flex items-center gap-3">
-          <Rating value={item.rating} />
-          <SpiceDots level={item.spiceLevel ?? 0} />
-          {item.calories && (
-            <span className="text-xs text-muted">{item.calories} kcal</span>
-          )}
-        </div>
-        <BadgeRow badges={item.badges} />
-        {item.ingredients && (
-          <p className="text-xs text-muted">
-            Ingredients: {item.ingredients.join(", ")}
-          </p>
-        )}
-        <p className="font-serif text-xl">{formatCurrency(item.price)}</p>
-      </div>
-
-      {/* Add-on groups */}
-      {groups.map((g) => (
-        <div key={g.id} className="border-t border-border px-5 py-4">
-          <div className="flex items-center justify-between">
-            <p className="font-medium">
-              {g.name}
-              {g.required ? " *" : ""}
-            </p>
-            <span className="text-xs text-muted">
-              {g.required ? `Min ${g.min}` : `Up to ${g.max}`}
-            </span>
+      <div className="md:grid md:grid-cols-2 md:gap-8 md:p-6">
+        {/* Left: hero + item info */}
+        <div>
+          <div className="relative md:overflow-hidden md:rounded-2xl">
+            <img
+              src={item.image}
+              alt={item.name}
+              className="h-64 w-full object-cover md:h-80"
+            />
+            <div className="absolute inset-0 h-full w-full bg-gradient-to-t from-background to-transparent" />
           </div>
-          {errors[g.id] && (
-            <p className="mt-1 text-xs text-danger">
-              Please select at least {g.min}.
-            </p>
-          )}
-          <div className="mt-2 space-y-2">
-            {g.options.map((o) => (
-              <label
-                key={o.id}
-                className="flex cursor-pointer items-center justify-between rounded-lg bg-surface px-3 py-2.5"
-              >
-                <span className="flex items-center gap-3">
-                  <input
-                    type={g.max === 1 ? "radio" : "checkbox"}
-                    name={g.id}
-                    checked={!!o.selected}
-                    onChange={() => toggle(g.id, o.id, g.max)}
-                    className="h-4 w-4 accent-[hsl(var(--accent))]"
-                  />
-                  <span>{o.name}</span>
+
+          <div className="relative z-10 -mt-10 space-y-4 p-5 md:-mt-10">
+            <div className="flex items-center gap-2">
+              <VegMark type={item.vegType} />
+              <h1 className="font-serif text-2xl">{item.name}</h1>
+            </div>
+            <p className="text-sm text-muted">{item.description}</p>
+            <div className="flex items-center gap-3">
+              <Rating value={item.rating} />
+              <SpiceDots level={item.spiceLevel ?? 0} />
+              {item.calories && (
+                <span className="text-xs text-muted">{item.calories} kcal</span>
+              )}
+            </div>
+            <BadgeRow badges={item.badges} />
+            {item.ingredients && (
+              <p className="text-xs text-muted">
+                Ingredients: {item.ingredients.join(", ")}
+              </p>
+            )}
+            <p className="font-serif text-xl">{formatCurrency(item.price)}</p>
+          </div>
+        </div>
+
+        {/* Right: add-ons + instructions */}
+        <div className="md:pt-14">
+          {groups.map((g) => (
+            <div key={g.id} className="border-t border-border px-5 py-4 md:border-t-0 md:px-0 md:first:pt-0">
+              <div className="flex items-center justify-between">
+                <p className="font-medium">
+                  {g.name}
+                  {g.required ? " *" : ""}
+                </p>
+                <span className="text-xs text-muted">
+                  {g.required ? `Min ${g.min}` : `Up to ${g.max}`}
                 </span>
-                {o.price > 0 && (
-                  <span className="text-sm text-muted">
-                    +{formatCurrency(o.price)}
-                  </span>
-                )}
-              </label>
-            ))}
+              </div>
+              {errors[g.id] && (
+                <p className="mt-1 text-xs text-danger">
+                  Please select at least {g.min}.
+                </p>
+              )}
+              <div className="mt-2 space-y-2">
+                {g.options.map((o) => (
+                  <label
+                    key={o.id}
+                    className="flex cursor-pointer items-center justify-between rounded-lg bg-surface px-3 py-2.5"
+                  >
+                    <span className="flex items-center gap-3">
+                      <input
+                        type={g.max === 1 ? "radio" : "checkbox"}
+                        name={g.id}
+                        checked={!!o.selected}
+                        onChange={() => toggle(g.id, o.id, g.max)}
+                        className="h-4 w-4 accent-[hsl(var(--accent))]"
+                      />
+                      <span>{o.name}</span>
+                    </span>
+                    {o.price > 0 && (
+                      <span className="text-sm text-muted">
+                        +{formatCurrency(o.price)}
+                      </span>
+                    )}
+                  </label>
+                ))}
+              </div>
+            </div>
+          ))}
+
+          <div className="border-t border-border px-5 py-4 md:px-0">
+            <p className="font-medium">Special instructions</p>
+            <Textarea
+              value={instructions}
+              onChange={(e) => setInstructions(e.target.value)}
+              placeholder="e.g. No onions"
+              className="mt-2"
+            />
           </div>
         </div>
-      ))}
-
-      {/* Special instructions */}
-      <div className="border-t border-border px-5 py-4">
-        <p className="font-medium">Special instructions</p>
-        <Textarea
-          value={instructions}
-          onChange={(e) => setInstructions(e.target.value)}
-          placeholder="e.g. No onions"
-          className="mt-2"
-        />
       </div>
 
       {/* Bottom bar: quantity + add */}
-      <div className="fixed bottom-0 left-1/2 z-40 w-full max-w-md -translate-x-1/2 border-t border-border bg-surface p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+      <div className="fixed bottom-0 left-1/2 z-40 w-full max-w-md -translate-x-1/2 border-t border-border bg-surface p-4 pb-[max(1rem,env(safe-area-inset-bottom))] md:max-w-xl">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2 rounded-lg border border-border px-2">
             <button

@@ -6,7 +6,7 @@ import { AssistanceSheet } from "../assistance/AssistanceSheet";
 export function AppLayout() {
   const location = useLocation();
   return (
-    <div className="mx-auto flex min-h-full w-full max-w-md flex-col bg-background">
+    <div className="mx-auto flex min-h-full w-full max-w-md flex-col bg-background md:max-w-5xl">
       <AnimatePresence mode="wait">
         <motion.main
           key={location.pathname}
