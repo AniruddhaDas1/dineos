@@ -29,7 +29,7 @@ window.$RefreshSig$ = () => (type) => type;`;
 }
 
 export default defineConfig({
-  base: "./",
+  base: process.env.NODE_ENV === "production" ? "/dineos/" : "/",
   plugins: [
     react(),
     reactRefreshPreamble(),

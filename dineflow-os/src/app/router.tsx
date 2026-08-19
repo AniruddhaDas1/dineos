@@ -44,34 +44,39 @@ const posChildren = [
   { path: "settings", element: <PermissionGate permission="settings:view"><SettingsPage /></PermissionGate> },
 ];
 
-export const router = createBrowserRouter([
+export const router = createBrowserRouter(
+  [
+    {
+      path: "/",
+      element: <WebsiteLayout />,
+    },
+    {
+      path: "order",
+      element: <OrderApp />,
+    },
+    {
+      path: "order/*",
+      element: <OrderApp />,
+    },
+    {
+      path: "pos",
+      element: (
+        <Suspense>
+          <PosLayout />
+        </Suspense>
+      ),
+      children: posChildren,
+    },
+    {
+      path: "kds",
+      element: (
+        <Suspense>
+          <KdsLayout />
+        </Suspense>
+      ),
+    },
+  ],
   {
-    path: "/",
-    element: <WebsiteLayout />,
-  },
-  {
-    path: "order",
-    element: <OrderApp />,
-  },
-  {
-    path: "order/*",
-    element: <OrderApp />,
-  },
-  {
-    path: "pos",
-    element: (
-      <Suspense>
-        <PosLayout />
-      </Suspense>
-    ),
-    children: posChildren,
-  },
-  {
-    path: "kds",
-    element: (
-      <Suspense>
-        <KdsLayout />
-      </Suspense>
-    ),
-  },
-]);
+    basename: import.meta.env.BASE_URL,
+  }
+);
