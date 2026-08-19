@@ -4,19 +4,15 @@
     <meta charset="utf-8">
     <title>DineFlow</title>
     <script type="text/javascript">
-      // Single Page Apps for GitHub Pages
-      // MIT License
-      // https://github.com/rafgraph/spa-github-pages
-      var pathSegmentsToKeep = 1;
-
-      var l = window.location;
-      l.replace(
-        l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
-        l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') + '/?/' +
-        l.pathname.slice(1).split('/').slice(pathSegmentsToKeep).join('/').replace(/&/g, '~and~') +
-        (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
-        l.hash
-      );
+      // Instant redirect from 404 path to hash route on GitHub Pages
+      var pathname = window.location.pathname;
+      var repo = "/dineos";
+      var subpath = pathname.startsWith(repo) ? pathname.slice(repo.length) : pathname;
+      if (subpath === "" || subpath === "/") {
+        subpath = "/";
+      }
+      var target = window.location.origin + repo + "/#" + subpath + window.location.search + window.location.hash;
+      window.location.replace(target);
     </script>
   </head>
   <body>

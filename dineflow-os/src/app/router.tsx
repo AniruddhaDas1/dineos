@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import { createBrowserRouter, Navigate } from "react-router-dom";
+import { createHashRouter, Navigate } from "react-router-dom";
 import { OrderApp } from "./routes";
 import { WebsiteLayout } from "@/features/website/WebsiteLayout";
 
@@ -44,39 +44,34 @@ const posChildren = [
   { path: "settings", element: <PermissionGate permission="settings:view"><SettingsPage /></PermissionGate> },
 ];
 
-export const router = createBrowserRouter(
-  [
-    {
-      path: "/",
-      element: <WebsiteLayout />,
-    },
-    {
-      path: "order",
-      element: <OrderApp />,
-    },
-    {
-      path: "order/*",
-      element: <OrderApp />,
-    },
-    {
-      path: "pos",
-      element: (
-        <Suspense>
-          <PosLayout />
-        </Suspense>
-      ),
-      children: posChildren,
-    },
-    {
-      path: "kds",
-      element: (
-        <Suspense>
-          <KdsLayout />
-        </Suspense>
-      ),
-    },
-  ],
+export const router = createHashRouter([
   {
-    basename: import.meta.env.BASE_URL,
-  }
-);
+    path: "/",
+    element: <WebsiteLayout />,
+  },
+  {
+    path: "order",
+    element: <OrderApp />,
+  },
+  {
+    path: "order/*",
+    element: <OrderApp />,
+  },
+  {
+    path: "pos",
+    element: (
+      <Suspense>
+        <PosLayout />
+      </Suspense>
+    ),
+    children: posChildren,
+  },
+  {
+    path: "kds",
+    element: (
+      <Suspense>
+        <KdsLayout />
+      </Suspense>
+    ),
+  },
+]);
